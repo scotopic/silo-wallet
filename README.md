@@ -10,9 +10,23 @@ You can see the currently known forks in the `forks.yaml` alternativelly run to 
 
 `python silo.py -l`
 
+### Adding new fork support
+Note: I'll do my best to keep up with all the forks but this is how you can do it:
+
+1. Open `forks.yaml`
+1. Add your token + data directory in the same format as the rest of the forks.
+1. `python silo.py -l` to verify
+
 ## Install/Requirements
-Requires Python 3.6+ and familiarity with CLI.
-Tested on Ubuntu 20.04 LTS and macOS 10.15.7.
+Requires Python 3.6+ and familiarity with CLI. Tested on Ubuntu 20.04 LTS and macOS 10.15.7.
+
+### Install Option A:
+`git clone https://github.com/scotopic/silo-wallet;cd silo-wallet;python silo.py -h`
+
+### Install Option B:
+1. Download .zip/.tar.gz from https://github.com/scotopic/silo-wallet/releases/
+1. Extract
+1. `python silo.py -h`
 
 ## Usage
 `python silo.py -a <your cold wallet address>`
