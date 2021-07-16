@@ -91,7 +91,7 @@ def get_db_file_from_address(address):
         if key in address:
             return db_for_token(key)
     
-    print("ERROR: Undefined blockchain, add your own to the token_to_data_dir_mapping list first and run the script again.")
+    print("ERROR: Undefined blockchain, add your own to the {} list first and run the script again.".format(FORKS_LIST_FILE))
     sys.exit(1)
     
 
