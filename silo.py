@@ -9,7 +9,8 @@ from chia.util.bech32m import decode_puzzle_hash, encode_puzzle_hash
 from sqlite3 import Error
 from pathlib import Path
 
-FORKS_LIST_FILE="forks.yaml"
+SILO_ROOT_PATH=Path(__file__).parent
+FORKS_LIST_FILE=(SILO_ROOT_PATH / "forks.yaml").resolve()
 TRILLION=1000000000000
 
 # Full path to blockchain.sqlite: user_home_path/<coin data dir>/chia_mainnet_blockchain_path

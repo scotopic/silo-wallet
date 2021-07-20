@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.0.3] - 2021-07-19
+
+### Fixed
+
+- Fix silo.py not finding the forks.yaml when silo wallet is executed from a different directory than the project.
 
 ## [0.0.3] - 2021-07-19
 
