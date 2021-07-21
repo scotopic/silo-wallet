@@ -13,9 +13,11 @@ SILO_ROOT_PATH=Path(__file__).parent
 FORKS_LIST_FILE=(SILO_ROOT_PATH / "forks.yaml").resolve()
 TRILLION=1000000000000
 
-# Full path to blockchain.sqlite: user_home_path/<coin data dir>/chia_mainnet_blockchain_path
+# Full path to blockchain.sqlite: user_home_path/<coin data dir>/fork_mainnet_blockchain_path
 user_home_path=Path.home()
-chia_mainnet_blockchain_path="mainnet/db/blockchain_v1_mainnet.sqlite"
+fork_mainnet_blockchain_path="mainnet/db/blockchain_v1_mainnet.sqlite"
+# TEMPORARY: silicoin currently is using a mixed path
+fork_testnet_blockchain_path="mainnet/db/blockchain_v1_testnet.sqlite"
 # Generally defined by util/default_root.py > DEFAULT_ROOT_PATH
 token_to_data_dir_mapping = {}
 
@@ -76,7 +78,11 @@ def db_for_token(token_name):
     # be assigned as default value of passed argument
     
     coin_data_dir=token_to_data_dir_mapping.get(token_name, "nothing")
-    full_path_to_db=user_home_path / coin_data_dir / chia_mainnet_blockchain_path
+    if token_name == "tsit":
+        full_path_to_db=user_home_path / coin_data_dir / fork_testnet_blockchain_path
+    else:
+        full_path_to_db=user_home_path / coin_data_dir / fork_mainnet_blockchain_path
+    
     #print("FULL PATH:", full_path_to_db)
     
     if Path(full_path_to_db).exists():
