@@ -11,7 +11,13 @@ from pathlib import Path
 
 SILO_ROOT_PATH=Path(__file__).parent
 FORKS_LIST_FILE=(SILO_ROOT_PATH / "forks.yaml").resolve()
-TRILLION=1000000000000
+
+# Based on chia/cmds/units.py (e.g. https://github.com/Chia-Network/chia-blockchain/blob/main/chia/cmds/units.py )
+# How to check: cat $COIN_NAME/cmds/units.py | grep -i "10 **"; cat $COIN_NAME/consensus/block_rewards.py | grep -i "_per_"
+# ChiaRose was the first ( so far only ) to change from trillion to million units of measure
+MILLION = 10 ** 9
+TRILLION= 10 ** 12
+UNITS_OF_MEASUREMENT=TRILLION
 
 # Full path to blockchain.sqlite: user_home_path/<coin data dir>/fork_mainnet_blockchain_path
 user_home_path=Path.home()
@@ -96,11 +102,23 @@ def get_db_file_from_address(address):
     
     for key in token_to_data_dir_mapping:
         if key in address:
+            # Reset units of measurement if non-standard (i.e. ChiaRose)
+            global UNITS_OF_MEASUREMENT
+            UNITS_OF_MEASUREMENT = units_of_measurement(key)
             return db_for_token(key)
     
     print("ERROR: Undefined blockchain, add your own to the {} list first and run the script again.".format(FORKS_LIST_FILE))
     sys.exit(1)
     
+
+def units_of_measurement(fork_token_name):
+    
+    if fork_token_name == "xcr":
+        UNITS_OF_MEASUREMENT = MILLION
+    else:
+        UNITS_OF_MEASUREMENT = TRILLION
+        
+    return UNITS_OF_MEASUREMENT
 
 def get_balance(address):
     # print("Retreiving the wallet balance for:", address)
@@ -136,9 +154,9 @@ def get_balance(address):
         for row in rows:
             
             #print(int.from_bytes(row[7], 'big'))
-            #print(row[0], row[1], row[2], row[3], row[4], row[5], row[6], str(row[7].hex.string, row[8])
             xch_raw=int.from_bytes(row[7], 'big')
-            xch=xch_raw/TRILLION
+            #print(row[0], row[1], row[2], row[3], row[4], row[5], row[6], xch_raw, row[8])
+            xch=xch_raw/UNITS_OF_MEASUREMENT
             # print("{:.13f}".format(xch))
             is_coin_spent = row[3]
             if is_coin_spent:
