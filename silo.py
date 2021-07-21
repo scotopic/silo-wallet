@@ -151,21 +151,22 @@ def get_balance(address):
         
         coin_balance = 0
         coin_spent_total = 0
+        
         for row in rows:
             
             #print(int.from_bytes(row[7], 'big'))
             xch_raw=int.from_bytes(row[7], 'big')
             #print(row[0], row[1], row[2], row[3], row[4], row[5], row[6], xch_raw, row[8])
             xch=xch_raw/UNITS_OF_MEASUREMENT
-            # print("{:.13f}".format(xch))
+            # print("{:.12f}".format(xch))
             is_coin_spent = row[3]
             if is_coin_spent:
                 coin_spent_total = xch + coin_spent_total
             else:
                 coin_balance = xch + coin_balance
             
-        print("TOTAL (spent): {:.13f}".format(coin_spent_total))
-        print("TOTAL:         {:.13f}".format(coin_balance))
+        print("TOTAL (spent): {:.12f}".format(coin_spent_total))
+        print("TOTAL:         {:.12f}".format(coin_balance))
     except Error as e:
         print(e)
 
