@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.1.0] - 2021-07-21
+
+### Fixed
+
+- Fixed ChiaRose units of measure from Trillion to Million ( https://github.com/snight1983/chia-rosechain/blob/main/chia/cmds/units.py )
 
 ## [0.0.7] - 2021-07-20
 
@@ -47,7 +52,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - The initial release of the project.
 
-[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.0.7...HEAD
+[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.0...HEAD
+[0.1.0]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.0
 [0.0.7]: https://github.com/scotopic/silo-wallet/releases/tag/v0.0.7
 [0.0.6]: https://github.com/scotopic/silo-wallet/releases/tag/v0.0.6
 [0.0.5]: https://github.com/scotopic/silo-wallet/releases/tag/v0.0.5
