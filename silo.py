@@ -6,6 +6,8 @@ import sqlite3
 import yaml
 
 from chia.util.bech32m import decode_puzzle_hash, encode_puzzle_hash
+from chia.util.ints import uint64
+
 from sqlite3 import Error
 from pathlib import Path
 
@@ -155,7 +157,7 @@ def get_balance(address):
         for row in rows:
             
             #print(int.from_bytes(row[7], 'big'))
-            xch_raw=int.from_bytes(row[7], 'big')
+            xch_raw=uint64.from_bytes(row[7])
             #print(row[0], row[1], row[2], row[3], row[4], row[5], row[6], xch_raw, row[8])
             xch=xch_raw/UNITS_OF_MEASUREMENT
             # print("{:.12f}".format(xch))
