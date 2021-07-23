@@ -14,8 +14,9 @@ FORKS_LIST_FILE=(SILO_ROOT_PATH / "forks.yaml").resolve()
 
 # Based on chia/cmds/units.py (e.g. https://github.com/Chia-Network/chia-blockchain/blob/main/chia/cmds/units.py )
 # How to check: cat $COIN_NAME/cmds/units.py | grep -i "10 **"; cat $COIN_NAME/consensus/block_rewards.py | grep -i "_per_"
-# ChiaRose was the first ( so far only ) to change from trillion to million units of measure
-MILLION = 10 ** 9
+# ChiaRose was one of several to change from trillion to billion units of measure
+HUNDRED_MILLION = 10 ** 8
+BILLION = 10 ** 9
 TRILLION= 10 ** 12
 UNITS_OF_MEASUREMENT=TRILLION
 
@@ -114,7 +115,9 @@ def get_db_file_from_address(address):
 def units_of_measurement(fork_token_name):
     
     if fork_token_name == "xcr":
-        UNITS_OF_MEASUREMENT = MILLION
+        UNITS_OF_MEASUREMENT = BILLION
+    else if fork_token_name == "xcc":
+        UNITS_OF_MEASUREMENT = HUNDRED_MILLION
     else:
         UNITS_OF_MEASUREMENT = TRILLION
         
@@ -126,7 +129,7 @@ def get_balance(address):
     # convert farmer address to puzzle hash
     puzzle_hash_bytes = decode_puzzle_hash(address)
     puzzle_hash = puzzle_hash_bytes.hex()
-    print("Searching for puzzle_hash:", puzzle_hash)
+    print(f"Searching for puzzle_hash: 0x{puzzle_hash}")
     
     # sql for puzzle hash
     try:
