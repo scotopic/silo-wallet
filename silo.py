@@ -116,7 +116,7 @@ def units_of_measurement(fork_token_name):
     
     if fork_token_name == "xcr":
         UNITS_OF_MEASUREMENT = BILLION
-    else if fork_token_name == "xcc":
+    elif fork_token_name == "xcc":
         UNITS_OF_MEASUREMENT = HUNDRED_MILLION
     else:
         UNITS_OF_MEASUREMENT = TRILLION
