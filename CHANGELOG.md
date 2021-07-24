@@ -12,8 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
-- Added `chives` fork support via forks.yaml
-
+- Added `chives` and `fork` :eyeroll: fork support via forks.yaml
 
 ## [0.1.1] - 2021-07-23
 
