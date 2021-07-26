@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.1.4] - 2021-07-26
+
+### Added
+
+- Added `shamrock` fork support via forks.yaml
+
+
 ## [0.1.3] - 2021-07-24
 
 ### Added
@@ -79,7 +86,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - The initial release of the project.
 
-[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.2...HEAD
+[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.4...HEAD
+[0.1.4]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.4
+[0.1.3]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.3
 [0.1.2]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.2
 [0.1.1]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.1
 [0.1.0]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.0
