@@ -4,7 +4,7 @@
 # Silo ( aka "show your cold wallet balance" tool )
 Quickly look up your Chia fork/altcoin wallet balance using your cold wallet public key.
 
-<img src="assets/silo-example.png" data-canonical-src="silo-example.png" width="" height="128" />
+<img src="assets/silo-example.png" data-canonical-src="silo-example.png" width="768" height="92" />
 
 ## Which Chia fork/altcoin is supported?
 Every one of them. If you run the full node of the Chia fork/altcoin then you can use this tool to look up your balance.
