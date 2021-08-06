@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.1.6] - 2021-08-06
+
+### Added
+
+- Added `beer` fork support via forks.yaml
+
 ## [0.1.5] - 2021-07-27
 
 ### Added
@@ -90,7 +96,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - The initial release of the project.
 
-[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.5...HEAD
+[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.6...HEAD
+[0.1.6]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.6
 [0.1.5]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.5
 [0.1.4]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.4
 [0.1.3]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.3
