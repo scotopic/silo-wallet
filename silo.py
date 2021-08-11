@@ -114,7 +114,7 @@ def get_db_file_from_address(address):
 
 def units_of_measurement(fork_token_name):
     
-    if fork_token_name == "xcr":
+    if fork_token_name == "xcr" or fork_token_name == "ffk":
         UNITS_OF_MEASUREMENT = BILLION
     elif fork_token_name == "xcc":
         UNITS_OF_MEASUREMENT = HUNDRED_MILLION
