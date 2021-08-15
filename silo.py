@@ -102,7 +102,7 @@ def get_db_file_from_address(address):
     load_fork_names();
     
     for key in token_to_data_dir_mapping:
-        if key in address:
+        if key in address[0:len(key)]:
             # Reset units of measurement if non-standard (i.e. ChiaRose)
             global UNITS_OF_MEASUREMENT
             UNITS_OF_MEASUREMENT = units_of_measurement(key)

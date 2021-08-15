@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 
+## [0.1.8] - 2021-08-15
+
+### Added
+
+- Added `achi` fork support via forks.yaml
+
+### Fixed
+
+- Fixed forks.yaml parsing to avoid false positive results by searching from the beginning of the wallet address.
+
 ## [0.1.7] - 2021-08-11
 
 ### Added
@@ -104,7 +114,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - The initial release of the project.
 
-[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.7...HEAD
+[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.8...HEAD
+[0.1.8]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.8
 [0.1.7]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.7
 [0.1.6]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.6
 [0.1.5]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.5
