@@ -15,6 +15,7 @@ FORKS_LIST_FILE=(SILO_ROOT_PATH / "forks.yaml").resolve()
 # Based on chia/cmds/units.py (e.g. https://github.com/Chia-Network/chia-blockchain/blob/main/chia/cmds/units.py )
 # How to check: cat $COIN_NAME/cmds/units.py | grep -i "10 **"; cat $COIN_NAME/consensus/block_rewards.py | grep -i "_per_"
 # ChiaRose was one of several to change from trillion to billion units of measure
+MILLION = 10 ** 6
 HUNDRED_MILLION = 10 ** 8
 BILLION = 10 ** 9
 TRILLION= 10 ** 12
@@ -114,7 +115,9 @@ def get_db_file_from_address(address):
 
 def units_of_measurement(fork_token_name):
     
-    if fork_token_name == "xcr" or fork_token_name == "ffk":
+    if fork_token_name == "xcd":
+        UNITS_OF_MEASUREMENT = MILLION
+    elif fork_token_name == "xcr" or fork_token_name == "ffk":
         UNITS_OF_MEASUREMENT = BILLION
     elif fork_token_name == "xcc":
         UNITS_OF_MEASUREMENT = HUNDRED_MILLION
