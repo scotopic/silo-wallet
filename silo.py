@@ -1,11 +1,16 @@
 # Dependency comes from https://github.com/Chia-Network/chia-blockchain/blob/main/chia/util/bech32m.py
 # Genesis address referenced: https://www.chiaexplorer.com/blockchain/address/xch18krkt5a9jlkpmxtx8akfs9kezkuldpsn4j2qpxyycjka4m7vu6hstf6hku
 
-import sys, getopt
-import sqlite3
-import yaml
+import sys,\
+    sqlite3,\
+    yaml,\
+    os,\
+    argparse,\
+    json
 
-from chia.util.bech32m import decode_puzzle_hash, encode_puzzle_hash
+from chia.util.bech32m import decode_puzzle_hash,\
+    encode_puzzle_hash
+from tabulate import tabulate
 from sqlite3 import Error
 from pathlib import Path
 
@@ -19,171 +24,147 @@ MILLION = 10 ** 6
 HUNDRED_MILLION = 10 ** 8
 BILLION = 10 ** 9
 TRILLION= 10 ** 12
-UNITS_OF_MEASUREMENT=TRILLION
 
-# Full path to blockchain.sqlite: user_home_path/<coin data dir>/fork_mainnet_blockchain_path
-user_home_path=Path.home()
-fork_mainnet_blockchain_path="mainnet/db/blockchain_v1_mainnet.sqlite"
-# TEMPORARY: silicoin currently is using a mixed path
-fork_testnet_blockchain_path="mainnet/db/blockchain_v1_testnet.sqlite"
-# Generally defined by util/default_root.py > DEFAULT_ROOT_PATH
-token_to_data_dir_mapping = {}
+class silo():
 
+    def __init__(self):
 
-def main(argv):
-    argumentList = sys.argv[1:]
-    
-    # Short options
-    options = "hla:"
-    
-    # Long options
-    long_options = ["help", "reward-address", "list-forks"]
-    
-    try:
-        # Parsing argument
-        arguments, values = getopt.getopt(argumentList, options, long_options)
-        # checking each argument
-        for currentArgument, currentValue in arguments:
-            if currentArgument in ("-h", "--help"):
-                print("NAME")
-                print ("silo -- display your crypto (Chia/altcoin) wallet balance\n")
-                print("DESCRIPTION")
-                print ("\tsilo -h | --help - Display this help.")
-                print ("\tsilo -a <address> | --reward-address <address> - Display your wallet address balance")
-                print ("\tsilo -l | --list-forks - Display currently supported forks from the {} file".format(FORKS_LIST_FILE))
-                print("EXAMPLE")
-                print ("\tpython silo.py -a xch18krkt5a9jlkpmxtx8akfs9kezkuldpsn4j2qpxyycjka4m7vu6hstf6hku\n")
-            elif currentArgument in ("-l", "--list-forks"):
-                load_fork_names(print_list=True)
-            elif currentArgument in ("-a", "--reward_address"):
-                get_balance(sys.argv[2])
-            
-    except getopt.error as err:
-        # output error, and return with an error code
-        print (str(err))
+        # Default Full path to blockchain.sqlite: user_home_path/<coin data dir>/fork_mainnet_blockchain_path
+        self.user_home_path = Path.home()
 
-def load_fork_names(print_list=False):
-    if Path(FORKS_LIST_FILE).exists():
+        # load the forks list file
+        if not os.path.isfile('forks.yaml'):
+            sys.exit('forks.yaml is missing from {}'.format(os.getcwd()))
+        with open('forks.yaml', 'r') as config_file_handle:
+            self.token_to_data_dir_mapping = yaml.load(config_file_handle, Loader=yaml.FullLoader)
+
+        self.token_to_data_dir_mapping_edit = {}
+        for item in self.token_to_data_dir_mapping.items():
+            self.token_to_data_dir_mapping_edit[item[0]] = os.path.abspath(os.path.join(self.user_home_path,
+                                                                                        item[1])) if item[1][0] == '.' else item[1]
+
+        # generate a mapping of each key regarding the units of measurement
+        self.measurement_unit_descriptor = {}
+        [self.measurement_unit_descriptor.update({key: TRILLION}) for key in self.token_to_data_dir_mapping.keys()]
+
+        self.measurement_unit_descriptor.update({'xcd': MILLION})
+        self.measurement_unit_descriptor.update({'xcr': BILLION})
+        self.measurement_unit_descriptor.update({'ffk': BILLION})
+        self.measurement_unit_descriptor.update({'xcc': HUNDRED_MILLION})
+
+    def read_options(self):
+
+        # Create the parser
+        opts_parser = argparse.ArgumentParser(description='SILO options')
+
+        # Add the arguments
+        opts_parser.add_argument('-a',
+                                 '--reward_addresses',
+                                 nargs='+',
+                                 type=str,
+                                 help='The reward address/ addresses')
+        opts_parser.add_argument('-l',
+                                 '--list_forks',
+                                 help='The stored forks in forks.yaml',
+                                 action = 'store_true')
+
+        # Execute the parse_args() method
+        args = opts_parser.parse_args()
+
+        self.addresses_to_process = args.reward_addresses
+        self.list_fork = args.list_forks
+
+    def list_forks(self):
+        print(tabulate([[item[0], item[1]] for item in self.token_to_data_dir_mapping_edit.items()],
+                       tablefmt="grid"))
+
+    def read_balance(self):
+        all_balances = []
+        for entry in self.addresses_to_process:
+            all_balances.append(self.get_balance(entry))
+
+        print('The data below has been saved as a json: {}'.format(os.path.abspath('output.json')))
+
+        print(tabulate([[entry['address'][:6] + '...' + entry['address'][-6:],
+                         entry['puzzle_hash'][:6] + '...' + entry['puzzle_hash'][-6:],
+                         entry['TOTAL'],
+                         entry['TOTAL (spent)']] for entry in all_balances],
+                       headers=['Address', 'Puzzle hash', 'TOTAL', 'TOTAL (spent)'],
+                       tablefmt="grid"))
+
+        with open('output.json', 'w') as json_out_handle:
+            json.dump(all_balances, json_out_handle, indent=2)
+
+        return all_balances
+
+    def create_tasks(self):
+        if self.list_fork: self.list_forks()
+        if self.addresses_to_process: return self.read_balance()
+
+    def create_connection(self,
+                          db_file):
+        conn = None
         try:
-            forks_list_file = open(FORKS_LIST_FILE)
+            conn = sqlite3.connect(db_file)
         except Error as e:
             print(e)
-            sys.exit(1)
-        global token_to_data_dir_mapping
-        token_to_data_dir_mapping = yaml.load(forks_list_file, Loader=yaml.FullLoader)
-        
-        if (print_list==True):
-            print(token_to_data_dir_mapping)
-    else:
-        print("ERROR: Check your that forks file exists and is in the correct format, then try again.")
-        sys.exit(1)
-    
 
-def db_for_token(token_name):
-    # get() method of dictionary data type returns 
-    # value of passed argument if it is present 
-    # in dictionary otherwise second argument will
-    # be assigned as default value of passed argument
-    
-    coin_data_dir=token_to_data_dir_mapping.get(token_name, "nothing")
-    if token_name == "tsit":
-        full_path_to_db=user_home_path / coin_data_dir / fork_testnet_blockchain_path
-    else:
-        full_path_to_db=user_home_path / coin_data_dir / fork_mainnet_blockchain_path
-    
-    #print("FULL PATH:", full_path_to_db)
-    
-    if Path(full_path_to_db).exists():
-        return full_path_to_db
-    else:
-        print("ERROR: blockchain path does not exist: ", full_path_to_db)
-        sys.exit(1)
+        return conn
 
-def get_db_file_from_address(address):
-    load_fork_names();
-    
-    for key in token_to_data_dir_mapping:
-        if key in address[0:len(key)]:
-            # Reset units of measurement if non-standard (i.e. ChiaRose)
-            global UNITS_OF_MEASUREMENT
-            UNITS_OF_MEASUREMENT = units_of_measurement(key)
-            return db_for_token(key)
-    
-    print("ERROR: Undefined blockchain, add your own to the {} list first and run the script again.".format(FORKS_LIST_FILE))
-    sys.exit(1)
-    
+    def get_balance(self,
+                    address):
+        # convert farmer address to puzzle hash
+        puzzle_hash_bytes = decode_puzzle_hash(address)
+        puzzle_hash = puzzle_hash_bytes.hex()
 
-def units_of_measurement(fork_token_name):
-    
-    if fork_token_name == "xcd":
-        UNITS_OF_MEASUREMENT = MILLION
-    elif fork_token_name == "xcr" or fork_token_name == "ffk":
-        UNITS_OF_MEASUREMENT = BILLION
-    elif fork_token_name == "xcc":
-        UNITS_OF_MEASUREMENT = HUNDRED_MILLION
-    else:
-        UNITS_OF_MEASUREMENT = TRILLION
-        
-    return UNITS_OF_MEASUREMENT
+        # get the db path for the current coin
+        address_filtering = list(filter(lambda x:address.startswith(x[0]), self.token_to_data_dir_mapping_edit.items()))
 
-def get_balance(address):
-    # print("Retreiving the wallet balance for:", address)
-    
-    # convert farmer address to puzzle hash
-    puzzle_hash_bytes = decode_puzzle_hash(address)
-    puzzle_hash = puzzle_hash_bytes.hex()
-    print(f"Searching for puzzle_hash: 0x{puzzle_hash}")
-    
-    # sql for puzzle hash
-    try:
-        db_file_to_load = get_db_file_from_address(address)
-        print(db_file_to_load)
-        conn = create_connection(db_file_to_load)
-        
+        if len(address_filtering) == 0:
+            sys.exit('Coin for {} is not defined in the config !'.format(address))
+        else:
+            db_path = address_filtering[0][1]
+
+        # sql for puzzle hash
+        if not os.path.isfile(db_path):
+            sys.exit('Could not find {}'.format(db_path))
+
+        conn = self.create_connection(db_path)
+
         dbcursor = conn.cursor()
         """
         sqlite3> select hex(amount) from coin_record where puzzle_hash="3d8765d3a597ec1d99663f6c9816d915b9f68613ac94009884c4addaefcce6af";
         bash>    echo $((16#246DDF9797668000))
-        
+
         https://github.com/Chia-Network/chia-blockchain/blob/a76446eba9fbe5a872fb8d537dfda497fc319b48/chia/full_node/coin_store.py#L108-L120
         Check the store file, like block_store.py, coin_store.py
         Usually it's just one of the objects in streamable format
         Like block = BlockRecord.from_bytes(.....)
         """
-        
+
         dbcursor.execute("SELECT * FROM coin_record WHERE puzzle_hash=?", (puzzle_hash,))
-        
+
         rows = dbcursor.fetchall()
-        
+
         coin_balance = 0
         coin_spent_total = 0
-        
+
         for row in rows:
-            
-            #print(int.from_bytes(row[7], 'big'))
+
             xch_raw=int.from_bytes(row[7], 'big')
-            #print(row[0], row[1], row[2], row[3], row[4], row[5], row[6], xch_raw, row[8])
-            xch=xch_raw/UNITS_OF_MEASUREMENT
-            # print("{:.12f}".format(xch))
+            xch=xch_raw/self.measurement_unit_descriptor[address_filtering[0][0]]
             is_coin_spent = row[3]
             if is_coin_spent:
                 coin_spent_total = xch + coin_spent_total
             else:
                 coin_balance = xch + coin_balance
-            
-        print("TOTAL (spent): {:.12f}".format(coin_spent_total))
-        print("TOTAL:         {:.12f}".format(coin_balance))
-    except Error as e:
-        print(e)
 
-def create_connection(db_file):
-    conn = None
-    try:
-        conn = sqlite3.connect(db_file)
-    except Error as e:
-        print(e)
-        
-    return conn
+        return {'TOTAL': coin_balance,
+                'TOTAL (spent)': coin_spent_total,
+                'address': address,
+                'puzzle_hash': puzzle_hash}
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    silo = silo()
+    silo.read_options()
+    silo.create_tasks()
