@@ -48,4 +48,5 @@ Found this project useful? Send your donation to support the project's further d
 * BTC: bc1q6k6tgj2nmyu44fwvut8hfh0dzht53a2nzaajve
 
 ## Feedback/Contribution
-Create a GitHub issue.
+* Create a GitHub issue.
+* Discord Server: https://discord.gg/bVG8Dw3K (or search for `SiloWallet`)
