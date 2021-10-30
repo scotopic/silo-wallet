@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.2.1] - 2021-10-30
+
+### Fixed
+
+- Fixed mainnet Silicoin directory in `forks.yaml` (`.silicoin` => `.sit`).
+
+
 ## [0.2.0] - 2021-10-28
 
 - Thank you to https://github.com/WarutaShinken/silo-wallet for keeping up with the Chia fork ecosphere. This update attempts to catchup to the latest forks.
