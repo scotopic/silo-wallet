@@ -49,4 +49,4 @@ Found this project useful? Send your donation to support the project's further d
 
 ## Feedback/Contribution
 * Create a GitHub issue.
-* Discord Server: https://discord.gg/bVG8Dw3K (or search for `SiloWallet`)
+* Discord Server: https://discord.gg/YrFqcR7qxZ (or search for `Silo Wallet`)
