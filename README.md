@@ -43,10 +43,13 @@ OR
 Found this project useful? Send your donation to support the project's further development
 
 * XCH: xch1w3c2nkkfh990qwvejlkj94f75cfy5fk2ecj3v2c7ja0xfxrzmgwst32tle
-* XFX: xfx1072d3mzgpx4vegw7tacahgdrp9mkderv5yxaz5w23cts29t8t7fsjkaud6
+* HDD: hdd1cf7p8ja3zt4x2temwj0czq4safeze0excsju640q7fw8e6myrphsnx3afh
 * ETH: 0x7f9F5Fd62E97B8Ed490B464CF710B45054720b92
 * BTC: bc1q6k6tgj2nmyu44fwvut8hfh0dzht53a2nzaajve
 
+* Chia CATs: xch1n48fpuzq3dpx8lv85vq5zqsyam07cpy3uujpe9x60a6r5wkd23kq34yrn8
 ## Feedback/Contribution
 * Create a GitHub issue.
-* Discord Server: https://discord.gg/YrFqcR7qxZ (or search for `Silo Wallet`)
+ * Join my discords: 
+   * Scotopic:    https://discord.gg/pgNRPS2Zfd
+   * Silo Wlalet: https://discord.gg/YrFqcR7qxZ
