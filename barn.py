@@ -19,7 +19,6 @@ Available APIs to pull CAT data from:
 '''
 CAT_API_URL='https://xchtoken.org/token_api.php'
 
-
 async def update_with_new_cats(chia_path, chia_wallet_fingerprint):
     print('----------UPDATE CATS ---------')
     
