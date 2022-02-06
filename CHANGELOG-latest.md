@@ -1,5 +1,5 @@
-## [0.2.1] - 2021-10-30
+## [1.0.0] - 2022-02-06
 
-### Fixed
+### Added
 
-- Fixed mainnet Silicoin directory in `forks.yaml` (`.silicoin` => `.sit`).
+- Added `barn.py --herd-cats` to update the Chia light wallet "CAT WALLET" to the real CAT symbol + name.
