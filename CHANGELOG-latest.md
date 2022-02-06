@@ -1,6 +1,5 @@
-## [0.2.2] - 2021-11-25
+## [1.0.0] - 2022-02-06
 
-### Fixed
+### Added
 
-- Replaced Skynet testnet (txnt) with mainnet (xnt) in `forks.yaml` (Thanks @SkynetNetwork)
-- Added `PecanRolls` (rolls) fork support via forks.yaml
+- Added `barn.py --herd-cats` to update the Chia light wallet "CAT WALLET" to the real CAT symbol + name.

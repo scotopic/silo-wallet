@@ -4,12 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [0.2.2] - 2021-11-25
+## [1.0.0] - 2022-02-06
 
-### Fixed
+### Added
 
-- Replaced Skynet testnet (txnt) with mainnet (xnt) in `forks.yaml` (Thanks @SkynetNetwork)
-- Added `PecanRolls` (rolls) fork support via forks.yaml
+- Added `barn.py --herd-cats` to update the Chia light wallet "CAT WALLET" to the real CAT symbol + name.
 
 
 ## [0.2.1] - 2021-10-30
@@ -166,7 +165,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - The initial release of the project.
 
-[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.9...HEAD
+[Unreleased]: https://github.com/scotopic/silo-wallet/releases/tag/v1.0.0...HEAD
+[1.0.0]: https://github.com/scotopic/silo-wallet/releases/tag/v1.0.0
+[0.2.1]: https://github.com/scotopic/silo-wallet/releases/tag/v0.2.1
+[0.2.0]: https://github.com/scotopic/silo-wallet/releases/tag/v0.2.0
 [0.1.9]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.9
 [0.1.8]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.8
 [0.1.7]: https://github.com/scotopic/silo-wallet/releases/tag/v0.1.7
