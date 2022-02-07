@@ -72,4 +72,4 @@ Found this project useful? Send your donation to support the project's further d
 * Create a GitHub issue.
 * Join my discords: 
    * Scotopic:    https://discord.gg/pgNRPS2Zfd
-   * Silo Wlalet: https://discord.gg/YrFqcR7qxZ
+   * Silo Wallet: https://discord.gg/YrFqcR7qxZ
