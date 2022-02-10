@@ -26,6 +26,7 @@ async def update_with_new_cats(chia_path, chia_wallet_fingerprint):
     all_cats = await get_available_cats()
     # print(json.dumps(all_cats, indent=4, sort_keys=True))
     
+    print('Looking for stray CATs...\n')
     # get CATs from chia light wallet which don't have names in chia wallet
     chia_local_wallet_cat_list=chia_path + " wallet show -f " + chia_wallet_fingerprint
     process = subprocess.Popen(chia_local_wallet_cat_list, shell=True,
@@ -45,7 +46,7 @@ async def update_with_new_cats(chia_path, chia_wallet_fingerprint):
                 
                 unnamed_asset_id = unnamed_asset_id.replace(')', '')
                 wallet_id = line_as_list[2]
-                print("FOUND walletID: " + wallet_id + " assetID: " + unnamed_asset_id)
+                print("FOUND unnamed CAT: walletID: " + wallet_id + " assetID: " + unnamed_asset_id)
                 untamed_cats_list.append(unnamed_asset_id)
     
     
@@ -53,12 +54,14 @@ async def update_with_new_cats(chia_path, chia_wallet_fingerprint):
         print ("All cats are tamed...err...named [^._.^]ﾉ彡")
         sys.exit(1)
     
+    # print(json.dumps(all_cats, indent=4, sort_keys=True))
+    
     # rename cats without names
     for untamed_cat in untamed_cats_list:
         
         await rename_cat(chia_path, chia_wallet_fingerprint, untamed_cat, all_cats)
     
-    print ("All cats are tamed...err...named [^._.^]ﾉ彡")
+    print("All cats are tamed...err...named [^._.^]ﾉ彡")
     
 #chia wallet add_token -id <asset_id> -n <asset_name>
 async def rename_cat(chia_path, chia_wallet_fingerprint, asset_id, known_cats_list):
@@ -67,12 +70,32 @@ async def rename_cat(chia_path, chia_wallet_fingerprint, asset_id, known_cats_li
     
     for known_cat in known_cats_list:
         # print(known_cat)
+        # print('-------------------------------------------')
+        
+        if not 'ASSET_ID' in known_cat:
+            continue
         
         if (known_cat['ASSET_ID'] == asset_id):
-
-            symbol = known_cat['Symbol']
-            name = known_cat['Name']
-            new_wallet_name=(symbol+" (" + name + ")")
+            
+            if not 'Symbol' in known_cat and not 'Name' in known_cat:
+                print('ERROR: Found ASSET_ID but neither Symbol nor Name...skipping...')
+                continue
+            
+            new_wallet_name = ''
+            symbol = ''
+            name = ''
+            
+            if 'Symbol' in known_cat:
+                symbol = known_cat['Symbol']
+                new_wallet_name = symbol
+            
+            if 'Name' in known_cat:
+                name = known_cat['Name']
+                
+                if len(new_wallet_name) > 0:
+                    new_wallet_name += " (" + name + ")"
+                else:
+                    new_wallet_name = name
             
             # print("Adopting CAT: " + new_wallet_name)
             
@@ -89,6 +112,7 @@ async def rename_cat(chia_path, chia_wallet_fingerprint, asset_id, known_cats_li
     
 
 async def get_available_cats():
+    print('Retrieving lastes CAT names...')
     cat_api_url=CAT_API_URL
     req = urllib.request.Request(cat_api_url)
     with urllib.request.urlopen(req) as url:

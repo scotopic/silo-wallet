@@ -1,5 +1,9 @@
-## [1.0.0] - 2022-02-06
+## [1.0.1] - 2022-02-10
 
-### Added
+### Fixed
 
-- Added `barn.py --herd-cats` to update the Chia light wallet "CAT WALLET" to the real CAT symbol + name.
+- Fixed error in parsing CATs API output.
+
+### Known Issues
+
+- barn.py might not work on Windows out of the box
