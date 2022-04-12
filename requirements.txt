@@ -1,0 +1,2 @@
+############# QR code support ##############
+qrcode[pil]

@@ -31,7 +31,8 @@ OR
   * Windows 10
 
   ### Install Option A:
-  `git clone https://github.com/scotopic/silo-wallet;cd silo-wallet;python silo.py -h`
+  1. Install silo: `git clone https://github.com/scotopic/silo-wallet;cd silo-wallet;python silo.py -h`
+  1. Install required tools: `pip install -r requirements.txt`
 
   ### Install Option B:
   1. Download .zip/.tar.gz from https://github.com/scotopic/silo-wallet/releases/
