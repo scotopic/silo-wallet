@@ -5,6 +5,9 @@ import sys, getopt
 import sqlite3
 import yaml
 
+import io
+import qrcode
+
 from chia.util.bech32m import decode_puzzle_hash, encode_puzzle_hash
 from sqlite3 import Error
 from pathlib import Path
@@ -37,10 +40,10 @@ def main(argv):
     argumentList = sys.argv[1:]
     
     # Short options
-    options = "hla:"
+    options = "hlqa:"
     
     # Long options
-    long_options = ["help", "reward-address", "list-forks"]
+    long_options = ["help", "reward-address", "list-forks", "qr"]
     
     try:
         # Parsing argument
@@ -54,10 +57,13 @@ def main(argv):
                 print ("\tsilo -h | --help - Display this help.")
                 print ("\tsilo -a <address> | --reward-address <address> - Display your wallet address balance")
                 print ("\tsilo -l | --list-forks - Display currently supported forks from the {} file".format(FORKS_LIST_FILE))
+                print ("\tsilo -q | --qr <address> - Display ASCII QR of wallet address.")
                 print("EXAMPLE")
                 print ("\tpython silo.py -a xch18krkt5a9jlkpmxtx8akfs9kezkuldpsn4j2qpxyycjka4m7vu6hstf6hku\n")
             elif currentArgument in ("-l", "--list-forks"):
                 load_fork_names(print_list=True)
+            elif currentArgument in ("-q", "--qr"):
+                render_qr_code(sys.argv[2])
             elif currentArgument in ("-a", "--reward_address"):
                 get_balance(sys.argv[2])
             
@@ -81,7 +87,19 @@ def load_fork_names(print_list=False):
         print("ERROR: Check your that forks file exists and is in the correct format, then try again.")
         sys.exit(1)
     
-
+def render_qr_code(address):
+    
+    qr = qrcode.QRCode(border=4)
+    qr.make_image(fill_color="black", back_color="white")
+    qr.add_data(address)
+    
+    f = io.StringIO()
+    f.isatty = lambda: True
+    qr.print_ascii(out=f, tty=True)
+    printed = f.getvalue()
+    print(printed)
+    
+    
 def db_for_token(token_name):
     # get() method of dictionary data type returns 
     # value of passed argument if it is present 
