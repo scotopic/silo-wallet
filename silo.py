@@ -12,6 +12,8 @@ from pathlib import Path
 SILO_ROOT_PATH=Path(__file__).parent
 FORKS_LIST_FILE=(SILO_ROOT_PATH / "forks.yaml").resolve()
 
+DATABASE_VERSION = 1
+
 # Based on chia/cmds/units.py (e.g. https://github.com/Chia-Network/chia-blockchain/blob/main/chia/cmds/units.py )
 # How to check: cat $COIN_NAME/cmds/units.py | grep -i "10 **"; cat $COIN_NAME/consensus/block_rewards.py | grep -i "_per_"
 # ChiaRose was one of several to change from trillion to billion units of measure
@@ -23,7 +25,6 @@ UNITS_OF_MEASUREMENT=TRILLION
 
 # Full path to blockchain.sqlite: user_home_path/<coin data dir>/fork_mainnet_blockchain_path
 user_home_path=Path.home()
-fork_mainnet_blockchain_path="mainnet/db/blockchain_v1_mainnet.sqlite"
 # TEMPORARY: silicoin currently is using a mixed path
 fork_tsit_blockchain_path="mainnet/db/blockchain_v1_testnet.sqlite"
 # For Skynet testnet (TXNT) #9
@@ -76,7 +77,7 @@ def load_fork_names(print_list=False):
         token_to_data_dir_mapping = yaml.load(forks_list_file, Loader=yaml.FullLoader)
         
         if (print_list==True):
-            print(token_to_data_dir_mapping)
+            print(token_to_data_dir_mapping['forks'])
     else:
         print("ERROR: Check your that forks file exists and is in the correct format, then try again.")
         sys.exit(1)
@@ -88,14 +89,28 @@ def db_for_token(token_name):
     # in dictionary otherwise second argument will
     # be assigned as default value of passed argument
     
-    coin_data_dir=token_to_data_dir_mapping.get(token_name, "nothing")
+    forks=token_to_data_dir_mapping['forks']
+    coin_data_dir=forks.get(token_name, "UNKNOWN-PATH")
     if token_name == "tsit":
         full_path_to_db=user_home_path / coin_data_dir / fork_tsit_blockchain_path
     elif token_name == "txnt":
         full_path_to_db=user_home_path / coin_data_dir / fork_txnt_blockchain_path
     else:
-        full_path_to_db=user_home_path / coin_data_dir / fork_mainnet_blockchain_path
-    
+        db_version = 1
+        db_versions_list = token_to_data_dir_mapping['settings']['databases']
+        
+        for db in db_versions_list:
+            db_mainnet_blockchain_path = db['path']
+            full_path_to_db=user_home_path / coin_data_dir / db_mainnet_blockchain_path
+            print(f"Looking for DB at path: {full_path_to_db}")
+            
+            if Path(full_path_to_db).exists():
+                print(f"Found: {full_path_to_db}")
+                global DATABASE_VERSION
+                DATABASE_VERSION = db_version
+                break;
+            
+            db_version += 1
     #print("FULL PATH:", full_path_to_db)
     
     if Path(full_path_to_db).exists():
@@ -107,7 +122,7 @@ def db_for_token(token_name):
 def get_db_file_from_address(address):
     load_fork_names();
     
-    for key in token_to_data_dir_mapping:
+    for key in token_to_data_dir_mapping['forks']:
         if key in address[0:len(key)]:
             # Reset units of measurement if non-standard (i.e. ChiaRose)
             global UNITS_OF_MEASUREMENT
@@ -142,11 +157,19 @@ def get_balance(address):
     # sql for puzzle hash
     try:
         db_file_to_load = get_db_file_from_address(address)
-        print(db_file_to_load)
+        # print("Loading DB:", db_file_to_load)
+        
+        app_settings = token_to_data_dir_mapping['settings']
+        versioned_db_settings = app_settings['databases'][DATABASE_VERSION-1]
+        
         conn = create_connection(db_file_to_load)
         
         dbcursor = conn.cursor()
         """
+        sqlite3> .mode column
+        sqlite3> .headers on
+        sqlite3> .schema coin_record
+        
         sqlite3> select hex(amount) from coin_record where puzzle_hash="3d8765d3a597ec1d99663f6c9816d915b9f68613ac94009884c4addaefcce6af";
         bash>    echo $((16#246DDF9797668000))
         
@@ -156,30 +179,75 @@ def get_balance(address):
         Like block = BlockRecord.from_bytes(.....)
         """
         
-        dbcursor.execute("SELECT * FROM coin_record WHERE puzzle_hash=?", (puzzle_hash,))
+        if DATABASE_VERSION == 1:
+            puzzle_hash = f"'{puzzle_hash}'"
+        elif DATABASE_VERSION == 2:
+            puzzle_hash = f"x'{puzzle_hash}'"
+        
+        sql_query=f"SELECT * FROM coin_record WHERE puzzle_hash={puzzle_hash};"
+        
+        # print('~~~~~~~~~~~~~~~~')
+        # print(sql_query)
+        # print('~~~~~~~~~~~~~~~~')
+        dbcursor.execute(sql_query)
         
         rows = dbcursor.fetchall()
         
-        coin_balance = 0
-        coin_spent_total = 0
+        results = sum_db_balance(rows, versioned_db_settings)
+            
+        coin_balance = results['coin_balance']
+        coin_spent_total = results['coin_spent_total']
         
-        for row in rows:
-            
-            #print(int.from_bytes(row[7], 'big'))
-            xch_raw=int.from_bytes(row[7], 'big')
-            #print(row[0], row[1], row[2], row[3], row[4], row[5], row[6], xch_raw, row[8])
-            xch=xch_raw/UNITS_OF_MEASUREMENT
-            # print("{:.12f}".format(xch))
-            is_coin_spent = row[3]
-            if is_coin_spent:
-                coin_spent_total = xch + coin_spent_total
-            else:
-                coin_balance = xch + coin_balance
-            
         print("TOTAL (spent): {:.12f}".format(coin_spent_total))
         print("TOTAL:         {:.12f}".format(coin_balance))
     except Error as e:
         print(e)
+
+
+def sum_db_balance(resulting_rows, versioned_db_settings):
+    """
+    v1
+    CREATE TABLE coin_record(coin_name text PRIMARY KEY, confirmed_index bigint, spent_index bigint, spent int, coinbase int, puzzle_hash text, coin_parent text, amount blob, timestamp bigint);
+    
+    v2
+    CREATE TABLE coin_record(coin_name blob PRIMARY KEY, confirmed_index bigint, spent_index bigint, coinbase int, puzzle_hash blob, coin_parent blob, amount blob, timestamp bigint);
+    """
+    
+    sql_balance_row = versioned_db_settings['sql_balance_row']
+    sql_coin_spent_index_row = versioned_db_settings['sql_coin_spent_index_row']
+
+    coin_spent_total = 0
+    coin_balance = 0
+    
+    for row in resulting_rows:
+        
+        # print(int.from_bytes(row[sql_balance_row], 'big'))
+        xch_raw=int.from_bytes(row[sql_balance_row], 'big')
+        
+        # if DATABASE_VERSION == 1:
+        #     print(row[0], row[1], row[2], row[3], row[4], row[5], row[6], xch_raw, row[8])
+        # elif DATABASE_VERSION == 2:
+        #     print(int.from_bytes(row[0], 'big'),
+        #           row[1],
+        #           row[2],
+        #           row[3],
+        #           int.from_bytes(row[4], 'big'),
+        #           int.from_bytes(row[5], 'big'),
+        #           int.from_bytes(row[6], 'big'),
+        #           row[7])
+        
+        xch=xch_raw/UNITS_OF_MEASUREMENT
+        # print("{:.12f}".format(xch))
+        is_coin_spent = row[sql_coin_spent_index_row]
+        if is_coin_spent:
+            coin_spent_total = xch + coin_spent_total
+        else:
+            coin_balance = xch + coin_balance
+    
+    return {
+        'coin_balance': coin_balance,
+        'coin_spent_total': coin_spent_total
+    }
 
 def create_connection(db_file):
     conn = None
