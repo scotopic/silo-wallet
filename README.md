@@ -15,12 +15,12 @@ OR
   <summary>Silo Wallet - click to expland</summary>
   ## Which Chia fork/altcoin is supported?
   Every one of them. If you run the full node of the Chia fork/altcoin then you can use this tool to look up your balance.
-  You can see the currently known forks in the `forks.yaml` alternativelly run to see the same list:
+  You can see the currently known forks in the `blockchains.yaml` alternativelly run to see the same list:
   
   ### Adding new fork support
   Note: I'll do my best to keep up with all the forks but this is how you can do it:
 
-  1. Open `forks.yaml`
+  1. Open `blockchains.yaml`
   1. Add your token + data directory in the same format as the rest of the forks.
   1. `python silo.py -l` to verify
 
