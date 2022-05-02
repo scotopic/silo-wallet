@@ -22,7 +22,7 @@ blockchains:
   xfx:
     data_dir: ".flax"
   spare:
-    data_dir: ".spare-blockchain"
+    data_dir: ".spare"
   cgn:
     data_dir: ".chaingreen"
   xgj:
@@ -116,13 +116,16 @@ blockchains:
   pips:
     data_dir: ".pipscoin"
   stai:
+    data_dir: ".stai"
+    mojo_per_coin: 9
+  tstai: ".staidelta"
     data_dir: ".staicoin"
     mojo_per_coin: 9
   xslv:
     data_dir: ".salvia"
   xnt:
     data_dir: ".skynet"
-  xnt:
+  txnt:
     data_dir: ".skynet"
     db_path: "mainnet/db/blockchain_v1_testnet_09.sqlite"
   xvm:
@@ -135,3 +138,17 @@ blockchains:
     data_dir: ".rolls"
   bpx:
     data_dir: ".bpx"
+  xeth:
+    data_dir: ".ethgreen"
+    mojo_per_coin: 9
+  xshib:
+    data_dir: ".shibgreen"
+    mojo_per_coin: 3
+  gl:
+    data_dir: ".gold"
+  profit:
+    data_dir: ".profit"
+  eco:
+    data_dir: ".ecostake"
+  xpt:
+    data_dir: ".petroleum"
