@@ -12,3 +12,4 @@
 ### Fixed
 
 - Multiple fork/blockchain default fixes.
+- Spare: Spare devs (https://github.com/Spare-Network/spare-blockchain) may have dropped the project and community took over (https://github.com/Spare-Community/spare-blockchain/)

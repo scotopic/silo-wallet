@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Fixed
 
 - Multiple fork/blockchain default fixes.
+- Spare: Spare devs (https://github.com/Spare-Network/spare-blockchain) may have dropped the project and community took over (https://github.com/Spare-Community/spare-blockchain/)
 
 ## [1.0.1] - 2022-02-10
 
