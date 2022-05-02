@@ -118,8 +118,8 @@ blockchains:
   stai:
     data_dir: ".stai"
     mojo_per_coin: 9
-  tstai: ".staidelta"
-    data_dir: ".staicoin"
+  tstai:
+    data_dir: ".staidelta"
     mojo_per_coin: 9
   xslv:
     data_dir: ".salvia"
