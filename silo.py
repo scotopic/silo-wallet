@@ -91,7 +91,7 @@ def db_for_token(token_name):
         coin_data_dir = blockchains_list[token_name]['data_dir']
         
         full_path_to_db = user_home_path / coin_data_dir / db_mainnet_blockchain_path
-        print(f"Looking for DB at path: {full_path_to_db}")
+        # print(f"Looking for DB at path: {full_path_to_db}")
         
         if Path(full_path_to_db).exists():
             print(f"Found: {full_path_to_db}")
