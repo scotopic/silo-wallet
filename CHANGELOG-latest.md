@@ -2,7 +2,7 @@
 
 ### Changed
 
-- Added Chia v2 db support for single wallet lookups. Big thanks to @WarutaShinken for helping with v2 support, fork updates and testing!
+- Added Chia v2 db support for single wallet lookups. Big thanks to https://github.com/WarutaShinken for helping with v2 support, fork updates and testing!
 - Refactored Silo Wallet to make future changes easier for the user.
 - Replaced `forks.yaml` with `blockchains.yaml`
 - Global default settings to locate the DB and units (`mojo_per_coin`) as found in `chia/cmds/units.py`
